@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)https://www.auduno.com/clmtrackr/clm_video.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Face tracker</title>
+	</head>
+	<body>
+		<script src="./webcam example_files/utils.js"></script>
+		<script src="./webcam example_files/numeric-1.2.6.min.js"></script>
+		<script src="./webcam example_files/mosse.js"></script>
+		<script src="./webcam example_files/jsfeat-min.js"></script>
+		<script src="./webcam example_files/frontalface.js"></script>
+		<script src="./webcam example_files/jsfeat_detect.js"></script>
+		<script src="./webcam example_files/left_eye_filter.js"></script>
+		<script src="./webcam example_files/right_eye_filter.js"></script>
+		<script src="./webcam example_files/nose_filter.js"></script>
+		<script src="./webcam example_files/model_pca_20_svm.js"></script>
+		<script src="./webcam example_files/clm.js"></script>
+		<script src="./webcam example_files/svmfilter_webgl.js"></script>
+		<script src="./webcam example_files/svmfilter_fft.js"></script>
+		<script src="./webcam example_files/mossefilter.js"></script>
+		<div id="content">
+			<div id="container" style="position : relative; width : 670px;">
+				<video id="videoel" width="800" height="600" preload="auto" loop=""></video>
+				<canvas id="overlay" width="800" height="600" style="position:absolute;top: 0px;left: 0px;"></canvas>
+			<br>
+			<input class="btn" type="button" value="start" onclick="startVideo()" id="startbutton">
+			<script>
+				var vid = document.getElementById('videoel');
+				var overlay = document.getElementById('overlay');
+				var overlayCC = overlay.getContext('2d');
+				
+				var ctrack = new clm.tracker({useWebGL : true});
+				ctrack.init(pModel);
+				
+				function enablestart() {
+					var startbutton = document.getElementById('startbutton');
+					startbutton.value = "start";
+					startbutton.disabled = null;
+				}
+				
+				var insertAltVideo = function(video) {
+					if (supports_video()) {
+						if (supports_ogg_theora_video()) {
+							video.src = "./media/cap12_edit.ogv";
+						} else if (supports_h264_baseline_video()) {
+							video.src = "./media/cap12_edit.mp4";
+						} else {
+							return false;
+						}
+						//video.play();
+						return true;
+					} else return false;
+				}
+				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+				window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL;
+
+				var videoSelector = {video : true};
+
+				if (window.navigator.appVersion.match(/Chrome\/(.*?) /)) {
+					var chromeVersion = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+					if (chromeVersion < 20) {
+						videoSelector = "video";
+					}
+				};
+			
+				navigator.getUserMedia(videoSelector, function( stream ) {
+					if (vid.mozCaptureStream) {
+						vid.mozSrcObject = stream;
+					} else {
+						vid.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+					}
+					vid.play();
+				}, function() {
+					alert("There was some problem trying to fetch video from your webcam, using a fallback video instead.");
+				});
+
+				vid.addEventListener('canplay', enablestart, false);
+				
+				function startVideo() {
+					// start video
+					vid.play();
+					// start tracking
+					ctrack.start(vid);
+					// start loop to draw face
+					drawLoop();
+				}
+				
+				function drawLoop() {
+					requestAnimFrame(drawLoop);
+					overlayCC.clearRect(0, 0, 800, 600);
+					//psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4);
+					if (ctrack.getCurrentPosition()) {
+						ctrack.draw(overlay);
+					}
+					// console.log(ctrack.getCurrentPosition())
+				}
+				
+			</script>
+		</div>
+
+</body></html>
