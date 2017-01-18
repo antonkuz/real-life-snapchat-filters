@@ -87,6 +87,11 @@ $(window).on('load', function(){
 
             var count = jsfeat.yape.detect(img_u8, corners, 5);
 
+            //convert corners to normal array
+            var detected_points = [];
+            for(var i = 0; i < count; i++) {
+              detected_points[i] = [corners[i].x, corners[i].y];
+            }
             // render result back to canvas
             var data_u32 = new Uint32Array(imageData.data.buffer);
             render_corners(corners, count, data_u32, 640);
@@ -118,11 +123,7 @@ $(window).on('load', function(){
 
 
 
-var positions = {"Positions": [
-  [1, 2],
-  [3, 4],
-  [5, 6]
-]}
+var positions = {"Positions": detected_points}
 
 function sendPositions() {
 	$.ajax({
