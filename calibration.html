@@ -22,12 +22,13 @@
         <script src="./static/svmfilter_webgl.js"></script>
         <script src="./static/svmfilter_fft.js"></script>
         <script src="./static/mossefilter.js"></script>
+        <script src="./static/compatibility.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
         <div id="content">
             <div id="container" style="position : relative; width : 670px;">
-                <video id="videoel" width="800" height="600" preload="auto" loop=""></video>
-                <canvas id="overlay" width="800" height="600" style="position:absolute;top: 0px;left: 0px;"></canvas>
+                <video id="videoel" width="640" height="480" preload="auto" loop=""></video>
+                <canvas id="overlay" width="640" height="480" style="position:absolute;top: 0px;left: 0px;"></canvas>
                 <br>
                 <input class="btn" type="button" value="confirm" onclick="sendPositions()" id="startbutton">
             </div>

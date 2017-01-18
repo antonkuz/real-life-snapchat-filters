@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	// "fmt"
+	"fmt"
 	"gorilla/websocket"
 	"html/template"
 	"net/http"
@@ -75,6 +75,8 @@ func (app *webapp) postPositionsHandler(w http.ResponseWriter, r *http.Request) 
 	decoder.Decode(&data)
 	defer r.Body.Close()
 	app.calirationArray = data.Positions
+
+	fmt.Println(data.Positions)
 
 	result := make(map[string]bool)
 	result["thx"] = true
