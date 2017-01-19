@@ -66,12 +66,12 @@ function receiveMessage(evt) {
     	}
     	console.log("new array size = "+new_array.length)
 
-		var inv_calib_points = numeric.inv(calib_points);
-		var inv_transform = numeric.dot(inv_calib_points, new_array);
-		transformation_matrix = numeric.inv(inv_transform);
+		var inv_detected_points = numeric.inv(new_array);
+		transformation_matrix = numeric.dot(inv_detected_points, calib_points);
     }
     else if (data["type"] == "positions"){
-    	positions = data["Positions"]
+    	var raw_positions = data["Positions"]
+        positions = numeric.dot(raw_positions, transformation_matrix);
         readyToLoop = true
         redraw()
     }
