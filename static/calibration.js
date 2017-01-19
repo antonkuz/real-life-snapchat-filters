@@ -1,3 +1,4 @@
+var detected_points = [];
 $(window).on('load', function(){
     "use strict";
 
@@ -88,7 +89,6 @@ $(window).on('load', function(){
             var count = jsfeat.yape.detect(img_u8, corners, 5);
 
             //convert corners to normal array
-            var detected_points = [];
             for(var i = 0; i < count; i++) {
               detected_points[i] = [corners[i].x, corners[i].y];
             }

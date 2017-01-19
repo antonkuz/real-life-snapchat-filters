@@ -6,6 +6,7 @@ import (
 	"gorilla/websocket"
 	"html/template"
 	"net/http"
+	"time"
 )
 
 type webapp struct {
@@ -38,10 +39,24 @@ var upgrader = websocket.Upgrader{
 func (app *webapp) wsCameraHandler(w http.ResponseWriter, r *http.Request) {
 	conn, _ := upgrader.Upgrade(w, r, nil)
 	app.cameraConn = conn
-	data := map[string]string{
-		"hello": "lol",
-	}
-	conn.WriteJSON(data)
+	go func() {
+		for {
+			data := make(map[string]interface{})
+			err := conn.ReadJSON(&data)
+			if err != nil {
+				println("Error in ReadJSON!")
+				fmt.Println(err)
+				return
+			}
+			println("sending from camera to projector")
+			data["type"] = "positions"
+			// fmt.Println(data)
+			if err := app.projectorConn.WriteJSON(data); err != nil {
+				println("error in WriteJSON!!")
+			}
+			time.Sleep(time.Second)
+		}
+	}()
 }
 
 func (app *webapp) wsProjectorHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,24 +66,13 @@ func (app *webapp) wsProjectorHandler(w http.ResponseWriter, r *http.Request) {
 		"hello": "lol",
 	}
 	conn.WriteJSON(data)
-	go func() {
-		for {
-			messageType, p, err := app.cameraConn.ReadMessage()
-			if err != nil {
-				println("Error in ReadMessage!")
-			}
-			if err = conn.WriteMessage(messageType, p); err != nil {
-				println("error in WriteMessage!!")
-				return
-			}
-		}
-	}()
 }
 
 type postProposalRequestData struct {
 	Positions [][]int
 }
 
+// calibrator positions
 func (app *webapp) postPositionsHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var data postProposalRequestData
@@ -77,13 +81,13 @@ func (app *webapp) postPositionsHandler(w http.ResponseWriter, r *http.Request) 
 	app.calirationArray = data.Positions
 
 	fmt.Println(data.Positions)
+	w.Write([]byte("got it"))
 
-	result := make(map[string]bool)
-	result["thx"] = true
-
-	marshalled, _ := json.Marshal(result)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Write(marshalled)
+	calibrationData := map[string]interface{}{
+		"type": "calibration",
+		"data": data.Positions,
+	}
+	app.projectorConn.WriteJSON(calibrationData)
 }
 
 func main() {

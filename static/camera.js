@@ -5,6 +5,8 @@ var overlayCC = overlay.getContext('2d');
 var ctrack = new clm.tracker({useWebGL : true});
 ctrack.init(pModel);
 
+var counter = 0
+
 function enablestart() {
 	var startbutton = document.getElementById('startbutton');
 	startbutton.value = "start";
@@ -64,8 +66,12 @@ function drawLoop() {
 	//psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4);
 	if (ctrack.getCurrentPosition()) {
 		ctrack.draw(overlay);
+		// alert(counter)
+		counter++
+		var positions = {"Positions": ctrack.getCurrentPosition()}
+		console.log(JSON.stringify(positions))
+		chat.send(JSON.stringify(positions))
 	}
-	console.log(ctrack.getCurrentPosition())
 }
 
 var chat = new WebSocket("ws://"+window.location.host+"/ws_camera")
@@ -84,7 +90,5 @@ function displayError(event) {
 }
 
 function startSending(evt) {
-	for (var i = 0; i < 10; i++) {
-		chat.send(""+i)
-	}
+	console.log("socket established")
 }
