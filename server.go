@@ -12,7 +12,6 @@ import (
 type webapp struct {
 	cameraConn      *websocket.Conn
 	projectorConn   *websocket.Conn
-	calirationArray [][]int
 }
 
 func (app *webapp) cameraHandler(w http.ResponseWriter, r *http.Request) {
@@ -77,8 +76,8 @@ func (app *webapp) postPositionsHandler(w http.ResponseWriter, r *http.Request) 
 	var data postProposalRequestData
 	decoder.Decode(&data)
 	defer r.Body.Close()
-	app.calirationArray = data.Positions
 
+	fmt.Println(data)
 	fmt.Println(data.Positions)
 	w.Write([]byte("got it"))
 

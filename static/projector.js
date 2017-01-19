@@ -1,5 +1,9 @@
 var positions = []
 var counter = 0
+var transformation_matrix = [[1,0], [0,1]];
+var face_array = [];
+//the points in the calibration image are at 
+var calib_points = [[200,300], [600,300]];
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -45,12 +49,35 @@ chat.onclose = displayError
 
 function receiveMessage(evt) {
     data = JSON.parse(evt.data)
-    // console.log("RECEIVED data")
-    if (data["type"] == "positions") {
-        positions = data["Positions"]
+    if (data["type"] == "calibration"){
+        var detected_points = data["Positions"];
+    	new_array = [];
+    	for(var i = 0; i < detected_points.length; i++){
+    		// if detected[i] is not in new_array, add it
+    		var isUnique = true
+    		for (var j = 0; j < new_array.length; j++) {
+    			if (detected_points[i][0] == new_array[j][0] && detected_points[i][1] == new_array[j][1]) {
+    				isUnique = false
+    			}
+    		}
+    		if (isUnique) {
+    			new_array.push(detected_points[i])
+    		} 
+    	}
+    	console.log("new array size = "+new_array.length)
+
+		var inv_calib_points = numeric.inv(calib_points);
+		var inv_transform = numeric.dot(inv_calib_points, new_array);
+		transformation_matrix = numeric.inv(inv_transform);
+    }
+    else if (data["type"] == "positions"){
+    	positions = data["Positions"]
         readyToLoop = true
         redraw()
     }
+	else {
+		console.log("Didn't recognize"+data["type"]);
+	}
 }
 
 function displayError(event) {
