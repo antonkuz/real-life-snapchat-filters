@@ -85,13 +85,14 @@ $(window).on('load', function(){
             jsfeat.imgproc.grayscale(imageData.data, 640, 480, img_u8);
 
             jsfeat.imgproc.box_blur_gray(img_u8, img_u8, 2, 0);
-
+            detected_points = [];
             var count = jsfeat.yape.detect(img_u8, corners, 5);
-
+            
             //convert corners to normal array
             for(var i = 0; i < count; i++) {
               detected_points[i] = [corners[i].x, corners[i].y];
             }
+            // console.log(detected_points.length)
             // render result back to canvas
             var data_u32 = new Uint32Array(imageData.data.buffer);
             render_corners(corners, count, data_u32, 640);
@@ -123,9 +124,10 @@ $(window).on('load', function(){
 
 
 
-var positions = {"Positions": detected_points}
 
 function sendPositions() {
+  var positions = {"Positions": detected_points}
+  console.log(positions)
 	$.ajax({
         type : "POST",
         url: "post_positions",

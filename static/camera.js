@@ -68,7 +68,7 @@ function drawLoop() {
 		ctrack.draw(overlay);
 		// alert(counter)
 		counter++
-		var positions = {"Positions": ctrack.getCurrentPosition()}
+		var positions = {"data": ctrack.getCurrentPosition()}
 		console.log(JSON.stringify(positions))
 		chat.send(JSON.stringify(positions))
 	}
