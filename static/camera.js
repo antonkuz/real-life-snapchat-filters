@@ -1,11 +1,10 @@
 var vid = document.getElementById('videoel');
 var overlay = document.getElementById('overlay');
 var overlayCC = overlay.getContext('2d');
+lastTime = new Date().getTime();
 
 var ctrack = new clm.tracker({useWebGL : true});
 ctrack.init(pModel);
-
-var counter = 0
 
 function enablestart() {
 	var startbutton = document.getElementById('startbutton');
@@ -66,11 +65,16 @@ function drawLoop() {
 	//psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4);
 	if (ctrack.getCurrentPosition()) {
 		ctrack.draw(overlay);
-		// alert(counter)
-		counter++
-		var positions = {"Positions": ctrack.getCurrentPosition()}
-		console.log(JSON.stringify(positions))
-		chat.send(JSON.stringify(positions))
+		// every 500 ms
+		var curTime = new Date().getTime();
+		if ((curTime - lastTime) > 50) {
+			lastTime = curTime
+			var positions = {"Positions": ctrack.getCurrentPosition()}
+			// console.log("SENT DATA")
+			chat.send(JSON.stringify(positions))
+		} else {
+			// console.log(curTime - lastTime)
+		}
 	}
 }
 

@@ -6,7 +6,7 @@ import (
 	"gorilla/websocket"
 	"html/template"
 	"net/http"
-	"time"
+	// "time"
 )
 
 type webapp struct {
@@ -48,13 +48,12 @@ func (app *webapp) wsCameraHandler(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 				return
 			}
-			println("sending from camera to projector")
+			// println("sending from camera to projector")
 			data["type"] = "positions"
 			// fmt.Println(data)
 			if err := app.projectorConn.WriteJSON(data); err != nil {
 				println("error in WriteJSON!!")
 			}
-			time.Sleep(time.Second)
 		}
 	}()
 }
@@ -104,5 +103,5 @@ func main() {
 	fs := http.FileServer(http.Dir(s))
 	s2 := "/" + s + "/"
 	http.Handle(s2, http.StripPrefix(s2, fs))
-	http.ListenAndServe(":8080", nil) // webserver running access http://localhost:8080/
+	http.ListenAndServe("128.237.194.58:8080", nil) // webserver running access http://localhost:8080/
 }
