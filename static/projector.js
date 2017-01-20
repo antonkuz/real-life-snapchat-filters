@@ -9,6 +9,14 @@ var calib_points = [[200, 400, 600], [300, 300, 400]];
 var x_offset = 0
 var y_offset = 0
 
+var playMaskOne = true
+
+$(document).keypress(function(e) {
+    if(e.which == 13) {
+        playMaskOne = !playMaskOne
+    }
+});
+
 $(document).keydown(function(e) {
     switch(e.which) {
         case 38: // up
@@ -39,12 +47,42 @@ function setup() {
     nose = loadImage("./static/nose.png");
     mask = loadImage("./static/mask.png");
     mouth = loadImage("./static/mouth.png");
+    deer = loadImage("./static/deer.png")
+    tiger = loadImage("./static/tiger.png")
+
 
     noLoop()
     frameRate(20)
 }
 
 function draw() {
+    if (playMaskOne) {
+        drawMaskOne()
+    } else {
+        drawMaskTwo()
+    }
+}
+
+function drawMaskTwo() {
+    fill(0);
+    rect(0,0,width,height);
+    rotation = degrees(atan((positions[33][0]-positions[7][0])/(positions[7][1]-positions[33][1])));
+
+    //drawing blush circles
+    push();
+    imageMode(CENTER);
+    faceCenterX = positions[62][0];
+    faceCenterY = positions[62][1];
+    faceRotation = rotation;
+    faceSizeX = dist(positions[1][0],positions[1][1],positions[13][0],positions[13][1]);
+    faceSizeY = dist(positions[7][0],positions[7][1],positions[33][0],positions[33][1])+dist(positions[33][0],positions[33][1],positions[62][0],positions[62][1]);
+    translate(faceCenterX, faceCenterY);
+    rotate(radians(faceRotation));
+    image(tiger, 0, 0, faceSizeX*1.2, faceSizeY*1.4);
+    pop();
+}
+
+function drawMaskOne() {
     fill(0);
     rect(0,0,width,height);
     rotation = degrees(atan((positions[33][0]-positions[7][0])/(positions[7][1]-positions[33][1])));
