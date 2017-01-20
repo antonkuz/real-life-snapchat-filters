@@ -9,11 +9,11 @@ var calib_points = [[200, 400, 600], [300, 300, 400]];
 var x_offset = 0
 var y_offset = 0
 
-var playMaskOne = true
+var maskOrder = 0
 
 $(document).keypress(function(e) {
     if(e.which == 13) {
-        playMaskOne = !playMaskOne
+        maskOrder += 1
     }
 });
 
@@ -49,6 +49,7 @@ function setup() {
     mouth = loadImage("./static/mouth.png");
     deer = loadImage("./static/deer.png")
     tiger = loadImage("./static/tiger.png")
+    rudolph = loadImage("./static/rudolph.png")
 
 
     noLoop()
@@ -56,10 +57,17 @@ function setup() {
 }
 
 function draw() {
-    if (playMaskOne) {
-        drawMaskOne()
-    } else {
-        drawMaskTwo()
+    switch(maskOrder%3) {
+        case 0:
+            drawMaskOne()
+            break
+        case 1:
+            drawMaskTwo()
+            break
+        case 2:
+            drawMaskThree()
+            break
+        default:
     }
 }
 
@@ -79,6 +87,36 @@ function drawMaskTwo() {
     translate(faceCenterX, faceCenterY);
     rotate(radians(faceRotation));
     image(tiger, 0, 0, faceSizeX*1.2, faceSizeY*1.4);
+    pop();
+}
+
+function drawMaskThree() {
+    fill(0);
+    rect(0,0,width,height);
+    rotation = degrees(atan((positions[33][0]-positions[7][0])/(positions[7][1]-positions[33][1])));
+
+    //drawing blush circles
+    push();
+    imageMode(CENTER);
+    faceCenterX = positions[62][0];
+    faceCenterY = positions[62][1];
+    faceRotation = rotation;
+    faceSizeX = dist(positions[1][0],positions[1][1],positions[13][0],positions[13][1]);
+    faceSizeY = dist(positions[7][0],positions[7][1],positions[33][0],positions[33][1])+dist(positions[33][0],positions[33][1],positions[62][0],positions[62][1]);
+    translate(faceCenterX, faceCenterY);
+    rotate(radians(faceRotation));
+    image(deer, 0, 0, faceSizeX*4, faceSizeY*3);
+    pop();
+
+    push();
+    imageMode(CENTER);
+    noseCenterX = positions[62][0];
+    noseCenterY = positions[62][1];
+    noseRotation = rotation;
+    noseScaleFactor = dist(positions[37][0],positions[37][1],positions[41][0],positions[41][1]);;
+    translate(noseCenterX, noseCenterY);
+    rotate(radians(noseRotation));
+    image(rudolph, 0, 0, noseScaleFactor*1.5, noseScaleFactor*1.5);
     pop();
 }
 
