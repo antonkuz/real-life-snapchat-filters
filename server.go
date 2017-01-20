@@ -10,8 +10,8 @@ import (
 )
 
 type webapp struct {
-	cameraConn      *websocket.Conn
-	projectorConn   *websocket.Conn
+	cameraConn    *websocket.Conn
+	projectorConn *websocket.Conn
 }
 
 func (app *webapp) cameraHandler(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +51,7 @@ func (app *webapp) wsCameraHandler(w http.ResponseWriter, r *http.Request) {
 			data["type"] = "positions"
 			// fmt.Println(data)
 			if err := app.projectorConn.WriteJSON(data); err != nil {
-				println("error in WriteJSON!!")
+				// println("error in WriteJSON!!")
 			}
 		}
 	}()
@@ -82,8 +82,8 @@ func (app *webapp) postPositionsHandler(w http.ResponseWriter, r *http.Request) 
 	w.Write([]byte("got it"))
 
 	calibrationData := map[string]interface{}{
-		"type": "calibration",
-		"data": data.Positions,
+		"type":      "calibration",
+		"Positions": data.Positions,
 	}
 	app.projectorConn.WriteJSON(calibrationData)
 }
@@ -102,5 +102,5 @@ func main() {
 	fs := http.FileServer(http.Dir(s))
 	s2 := "/" + s + "/"
 	http.Handle(s2, http.StripPrefix(s2, fs))
-	http.ListenAndServe("128.237.194.58:8080", nil) // webserver running access http://localhost:8080/
+	http.ListenAndServe("128.237.180.130:8080", nil)
 }

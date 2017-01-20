@@ -1,7 +1,7 @@
 var vid = document.getElementById('videoel');
 var overlay = document.getElementById('overlay');
 var overlayCC = overlay.getContext('2d');
-lastTime = new Date().getTime();
+var lastTime = new Date().getTime();
 
 var ctrack = new clm.tracker({useWebGL : true});
 ctrack.init(pModel);
@@ -65,7 +65,7 @@ function drawLoop() {
 	//psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4);
 	if (ctrack.getCurrentPosition()) {
 		ctrack.draw(overlay);
-		// every 500 ms
+		// every 50 ms
 		var curTime = new Date().getTime();
 		if ((curTime - lastTime) > 50) {
 			lastTime = curTime
